@@ -20,6 +20,7 @@ RED = (255, 0, 0)
 paused = False
 score = 0
 highScore = 0
+sound = 0
 
 # Creates Highscore file if it does not exist
 highScore_path = os.path.join(os.path.dirname(__file__), 'Highscore.txt')
@@ -40,6 +41,13 @@ pygame.init()
 # Setup game window
 game_window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Snake')
+
+# List of sound files
+select = pygame.mixer.Sound('Select.wav')
+eat = pygame.mixer.Sound('Eat.wav')
+death = pygame.mixer.Sound('Death.wav')
+
+music = ['FunnyBit.mp3', 'BossTime.mp3']
 
 # Snake class
 class Snake:
@@ -137,6 +145,8 @@ def display_other():
     game_window.blit(other_surface, (WINDOW_WIDTH//2-50, 500))
     other_surface = score_font.render('Font by Reekee D', True, GREY)
     game_window.blit(other_surface, (WINDOW_WIDTH//2-50, 550))
+    other_surface = score_font.render('Music by David R', True, GREY)
+    game_window.blit(other_surface, (WINDOW_WIDTH//2-50, 600))
     
 # Main game loop
 def game():
@@ -145,6 +155,7 @@ def game():
     global paused
     global score
     global highScore
+    pygame.mixer.music.stop()
     snake = Snake()
     food = Food()
     game_over = False
@@ -163,8 +174,10 @@ def game():
                     game_over = True
                 elif event.key == pygame.K_q:
                     paused = not paused
+                    select.play()
                 elif event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     snake.turn(event.key)
+                    select.play()
 
         if not paused:
             game_window.fill(BLACK)
@@ -180,10 +193,12 @@ def game():
             if snake.positions[0] == food.position:
                 snake.length += 1
                 food = Food()
+                eat.play()
     
             # Check for collision with walls or self
             if snake.positions[0][0] < 0 or snake.positions[0][0] > WINDOW_WIDTH - BLOCK_SIZE or \
-            snake.positions[0][1] < 0 or snake.positions[0][1] > WINDOW_HEIGHT - BLOCK_SIZE or snake.positions[0] in snake.positions[1:]:
+            snake.positions[0][1] < 0 or snake.positions[0][1] > WINDOW_HEIGHT - BLOCK_SIZE or \
+            snake.positions[0] in snake.positions[1:]:
                 score = snake.length - 1
                 if score > int(highScore):
                     temp = highScore
@@ -192,6 +207,7 @@ def game():
                         file.write(str(highScore))
                         print(f'High score updated from {temp} to {highScore}')
                 game_over = True
+                death.play()
 
             # Game clock
             clock.tick(20)
@@ -201,12 +217,19 @@ def game():
             game_window.blit(pause_surface, (WINDOW_WIDTH//2 - 60, WINDOW_HEIGHT//2))
             pygame.display.update()
             clock.tick(5)
+        
+        if not pygame.mixer.music.get_busy():
+            global music
+            pygame.mixer.music.load(random.choice(music))
+            pygame.mixer.music.play()
     menu()
 
 # Main menu
 def menu():
     global score
     global highScore
+    pygame.mixer.music.load('8BitMenu.mp3')
+    pygame.mixer.music.play(-1)
     game_window.fill(BLACK)
     display_score(score)
     display_highScore(highScore)
