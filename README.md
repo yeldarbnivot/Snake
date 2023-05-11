@@ -1,4 +1,4 @@
-# Snake
+# Snake V1.1
 A simple Snake game made with Python
 
 You will need Python and Pygame installed to play
@@ -8,5 +8,6 @@ Q to pause
 E to exit
 R to (re)start
 
-Made by Tovin Bradley
+Made by Tovin B
 Font by Reekee D
+Music by David R (https://www.fesliyanstudios.com/royalty-free-music/downloads-c/8-bit-music/6)
