@@ -16,3 +16,7 @@ Updates
 V1: Release
 V1.1: Added sounds
 V1.11: Optimization and bug fixes
+
+Future:
+Settings
+Replays
